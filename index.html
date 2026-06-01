@@ -822,8 +822,28 @@ function submitForm(e){
   const date=document.getElementById('f-date').value;
   const comment=document.getElementById('f-comment').value;
   const service=document.getElementById('f-service').value;
-  // TODO: Telegram webhook
-  // fetch('https://api.telegram.org/bot{TOKEN}/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:'{CHAT_ID}',text:`📋 Нова заявка!\n✂️ ${service}\n👤 ${name}\n📞 ${phone}\n📅 ${date}\n💬 ${comment}`})});
+  // ✅ TELEGRAM WEBHOOK
+  const TOKEN   = '8090010233:AAGucMxosOir1f7ttPIUODULMbO2DYoqTHU';
+  const CHAT_ID = '2101718091';
+
+  const dateFormatted = date ? new Date(date).toLocaleString('uk-UA',{
+    day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'
+  }) : 'не вказано';
+
+  const msgText =
+    `🌸 <b>Нова заявка — LoveEpil</b>\n\n` +
+    `✂️ <b>Послуга:</b> ${service || 'не вказано'}\n` +
+    `👤 <b>Ім'я:</b> ${name}\n` +
+    `📞 <b>Телефон:</b> ${phone}\n` +
+    `📅 <b>Дата/час:</b> ${dateFormatted}\n` +
+    `💬 <b>Коментар:</b> ${comment || '—'}`;
+
+  fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:CHAT_ID, text:msgText, parse_mode:'HTML'})
+  }).catch(err=>console.error('Telegram error:',err));
+
   alert(currentLang==='uk'?`Дякуємо, ${name}! 🌸\nМи зв'яжемось з вами найближчим часом.`:`Thank you, ${name}! 🌸\nWe will contact you shortly.`);
   document.getElementById('booking-form').reset();
   document.getElementById('popup-service-badge').classList.remove('visible');
